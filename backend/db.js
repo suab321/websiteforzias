@@ -6,19 +6,21 @@ mongoose.connect(db_url).catch(err=>console.log(err));
 
 const developer_schema=new mongoose.Schema({
     name:{type:String},
-    email:{type:String,unique:true},
-    password:String,
-    contactNo:{type:String},
-    ongoing_projects:[{type:Number,default:0}],
-    projects_completed:[{type:Number,default:0}],
-    skills:String
+    email:{type:String,unique:true,required:true},
+    password:{type:String,password:""},
+    contactNo:{type:String,default:""},
+    ongoing_projects:[{name:String,proid:String}],
+    projects_completed:[{type:String}],
+    skills:{type:String,default:""},
+    status:{type:String,default:"Hibernation"}
 })
 const project_schema=new mongoose.Schema({
     name:String,
     details:String,
+    developers:[{name:String,devid:String}],
     startdate:String,
     enddate:String,
-    iscomplete:{type:Number,default:0}
+    type:{type:String,default:"notstarted"}
 })
 const admin_schema=new mongoose.Schema({
     name:{type:String},

@@ -11,6 +11,10 @@ import New from './components/new/New';
 import NewProject from './components/newprojetc/NewProject'
 import Password from './components/password/Password';
 import DeveloperDashboard from './components/developerdashboard/DeveloperDashboard';
+import AssigningDeveloper from './components/assigning_developer/AssigningDevelopers';
+import ProjectDetail from './components/showtable/ProjectDetail';
+import DevDetail from './components/DeveloperDetail/DevDetail';
+
 
 
 class App extends Component {
@@ -23,6 +27,8 @@ class App extends Component {
             <Router>
               <div>
                 <switch>
+                  <Route path="/developerdetail/:id" component={DevDetail}/>
+                  <Route path="/assign/:id/" component={AssigningDeveloper}/>
                   <Route path="/password/:email" component={Password}/>
                   <Route path="/developerdashboard" component={DeveloperDashboard}/>
                   <Route exact path='/adminlogin' component={AdminLogin}/>
@@ -31,6 +37,7 @@ class App extends Component {
                   <Route exact path="/admindashboard" component={AdminDasboard}/>
                   <Route path="/newproject" component={NewProject}/>
                   <Route path="/new" component={New}/>
+                  <Route path="/projectdetail/:id" component={ProjectDetail}/>
                 </switch>
                 <Navbar inverse fixedTop collapseOnSelect>
                     <Navbar.Header>

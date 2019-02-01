@@ -1,5 +1,6 @@
 import React from 'react';
 import Axios from 'axios';
+import {Redirect} from 'react-router-dom'
 
 class NewProjrct extends React.Component{
     constructor(){
@@ -9,10 +10,10 @@ class NewProjrct extends React.Component{
         this.startdate=React.createRef();
         this.enddate=React.createRef();
         this.create=this.create.bind(this);
-        this.state={error:1};
+        this.state={error:1,success:0};
         Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
             if(res.status===200){
-                Axios.get(`http://localhost:3002/cancreate/${res.data}`)
+                Axios.get(`http://localhost:3002/cancreate`,{headers:{Authorization: `Bearer ${res.data}`}})
                 .then(res=>{
                     if(res.status===200){
                        this.setState({error:0});
@@ -22,10 +23,15 @@ class NewProjrct extends React.Component{
         })
     }
     create(){
-
         if(!this.state.error){
-            Axios.post('http://localhost:3002/createproject',{name:this.name.current.value
-                    ,details:this.detail.current.value,startdate:this.startdate.current.value,enddate:this.enddate.current.value})
+            Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
+                Axios.post('http://localhost:3002/createproject',{name:this.name.current.value
+                    ,details:this.detail.current.value,startdate:this.startdate.current.value,enddate:this.enddate.current.value},{headers:{Authorization: `Bearer ${res.data}`}})
+                    .then(res=>{
+                        if(res.status===201)
+                            this.setState({success:res.data._id});
+                    })
+            })
             }
 
         console.log(this.name.current.value);
@@ -34,6 +40,7 @@ class NewProjrct extends React.Component{
         console.log(this.enddate.current.value);
     }
     render(){
+        console.log(this.state.success);
         if(this.state.error){
         return(
             <div style={{textAlign:"center"}}>
@@ -57,6 +64,7 @@ class NewProjrct extends React.Component{
         )
       }
       else{
+          if(!this.state.success){
         return(
             <div style={{textAlign:"center"}}>
 				<div class='form'>
@@ -77,6 +85,12 @@ class NewProjrct extends React.Component{
             </div>
         )
       }
+      else{
+          return(
+              <Redirect to={`/assign/${this.state.success}`}/>
+          )
+      }
     }
+  }
 }
 export default NewProjrct;

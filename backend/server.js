@@ -1,5 +1,5 @@
 const express=require('express');
-const session=require('express-session');
+const session=require('cookie-session');
 const jwt=require('jsonwebtoken');
 const cors=require('cors');
 const {url}=require('./url');
@@ -50,6 +50,7 @@ app.get('/user',(req,res)=>{
         res.status(400).json("No one");
     }
 })
+
 //to get the details of loggedin user
 app.get('/name',verify,(req,res)=>{
     jwt.verify(req.token,'suab',(err,authdata)=>{
@@ -95,7 +96,7 @@ app.route('/developerlogin')
 })
 
 //creating a user admin or developer
-app.post('/create',(req,res)=>{
+app.post('/create',verify,(req,res)=>{
     console.log(req.body.email)
     const db=new temporary
     db.email=req.body.email;
@@ -145,7 +146,7 @@ app.post('/updatepassword/:email',(req,res)=>{
             db.save().then(user=>{
                 if(user){
                     console.log(user)
-                    temporary.findOneAndDelete({email:req.params.email});
+                    temporary.findOneAndRemove({email:req.params.email});
                     req.session.user=user;
                     res.redirect(`${url}/admindashboard`)
                 }
@@ -162,7 +163,7 @@ app.post('/updatepassword/:email',(req,res)=>{
             db.save().then(user=>{
                 if(user){
                     console.log(user)
-                    temporary.findOneAndDelete({email:req.params.email});
+                    temporary.findOneAndRemove({email:req.params.email});
                     //req.session.user=user;
                     res.redirect(`${url}/developers_details/${user.email}`)
                 }
@@ -176,13 +177,11 @@ app.post('/updatepassword/:email',(req,res)=>{
 
 //getting the details of developer
 app.post('/updatedeveloper/:email',(req,res)=>{
-    developer.findOneAndUpdate({email:req.params.email}).then(user=>{
-        user.skills=req.body.skills
-        user.save().then(user=>{
-            req.session.user=user;
-            res.redirect(`${url}/developerdashboard`);
-        }).catch(err=>console.log(err));
-    })
+    developer.findOneAndUpdate({email:req.params.email},{skills:req.body.skills},{new:true}).then(user=>{
+        console.log(user);
+        req.session.user=user;
+        res.redirect(`${url}/developerdashboard`)
+    }).catch(err=>console.log(err))
 })
 
 //creating a superuser for testing purpose only
@@ -196,12 +195,12 @@ app.post('/superuser',(req,res)=>{
             res.redirect(`${url}/admin_dashboard`);
         else
             res.status(400).json("error")
-    }).cathc
+    })
 })
 
 //checking if the user can create the project
-app.get('/cancreate/:token',(req,res)=>{
-    jwt.verify(req.params.token,"suab",(err,authdata)=>{
+app.get('/cancreate',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
         if(err)
             res.status(400).json(err);
         else{
@@ -215,7 +214,7 @@ app.get('/cancreate/:token',(req,res)=>{
     })
 })
 //creatingproject
-app.post('/createproject',(req,res)=>{
+app.post('/createproject',verify,(req,res)=>{
     const db=new project   
     db.name=req.body.name;
     db.details=req.body.details;
@@ -229,7 +228,74 @@ app.post('/createproject',(req,res)=>{
     }).catch(err=>res.status(400).json(err))
 })
 
+//getting all the developers
+app.get('/get_all_developers',verify,(req,res)=>{
+    developer.find({}).then(user=>{
+        res.status(200).json(user);
+    }).catch(err=>{
+        res.status(400).json([]);
+    })
+})
 
+//assigndevelopers to project
+app.put('/assigndevelopers/:id',verify,(req,res)=>{
+    var user1;
+   req.body.developers.map(developerid=>{
+       project.findById({_id:req.params.id}).then(user=>{
+       developer.findOneAndUpdate({_id:developerid},{$addToSet:{'ongoing_projects':{'name':user.name,'proid':user.id}}},{new:true}).then(user=>{
+        project.findOneAndUpdate({_id:req.params.id},{$addToSet:{'developers':{'name':user.name,'devid':developerid}}},{new:true})
+        .then(user=>{
+           user1.push(user);
+        }).catch(err=>res.status(400).json(err));
+       }).catch(err=>res.status(400).json(err))
+   })
+   res.status(200).json(user1);
+})
+})
+
+//getting project details
+app.get('/project/:type',verify,(req,res)=>{
+    project.find({type:req.params.type},{name:true,_id:true}).then(user=>{
+        if(user)
+            res.status(200).json(user);
+    }).catch(err=>{
+        console.log(err);
+        res.status(400).json(err);
+    })
+})
+
+//getting project detail based on their Id
+app.get('/projectdetail/:id',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(err)
+            res.status(400).json(err);
+        else{
+            admin.findOne({email:authdata.user.email}).then(user=>{
+                if(user){
+                    project.findById({_id:req.params.id}).then(user=>{
+                        if(user)
+                            res.status(200).json(user);
+                        else
+                            res.status(400).json("no projects");
+                    }).catch(err=>{res.status(400).json(err)})
+                }
+            }).catch(err=>{res.status(400).json(err)})
+        }
+    })
+})
+
+//getting developers in project
+app.get('/getdeveloperinproject/:id',(req,res)=>{
+    project.findById({_id:req.params.id},{developers:true}).then(user=>{
+       res.status(200).json(user);
+    }).catch(err=>{res.status(400).json(err)})
+})
+//getting developers name based on their id
+app.get('/developerdetail/:id',(req,res)=>{
+    developer.findById({_id:req.params.id}).then(user=>{
+        res.status(200).json(user);
+    }).catch(err=>{res.status(400),json(err)});
+})
 
 
 app.listen(process.env.PORT||3002);
