@@ -24,7 +24,7 @@ class Card2 extends React.Component{
   render() {
     return (
       <div style={{border:"1px solid black",width:"fit-content",marginTop:"2em",marginLeft:"26%",padding:"2% 2%"}}>
-      <a href={`/projectdetail/`}><h1>{this.props.i.name}</h1></a>
+      <a href={`/mypro/${this.props.i.proid}`}><h1>{this.props.i.name}</h1></a>
       </div>
     );
   };

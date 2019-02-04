@@ -9,7 +9,7 @@ const developer_schema=new mongoose.Schema({
     email:{type:String,unique:true,required:true},
     password:{type:String,password:""},
     contactNo:{type:String,default:""},
-    ongoing_projects:[{name:String,proid:String}],
+    ongoing_projects:[{name:String,proid:String,currentStatus:String}],
     projects_completed:[{type:String}],
     skills:{type:String,default:""},
     status:{type:String,default:"Hibernation"}
@@ -17,7 +17,7 @@ const developer_schema=new mongoose.Schema({
 const project_schema=new mongoose.Schema({
     name:String,
     details:String,
-    developers:[{name:String,devid:String}],
+    developers:[{name:String,devid:String,currentStatus:String}],
     startdate:String,
     enddate:String,
     type:{type:String,default:"notstarted"}

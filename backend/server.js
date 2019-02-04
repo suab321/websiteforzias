@@ -242,8 +242,8 @@ app.put('/assigndevelopers/:id',verify,(req,res)=>{
     var user1;
    req.body.developers.map(developerid=>{
        project.findById({_id:req.params.id}).then(user=>{
-       developer.findOneAndUpdate({_id:developerid},{$addToSet:{'ongoing_projects':{'name':user.name,'proid':user.id}}},{new:true}).then(user=>{
-        project.findOneAndUpdate({_id:req.params.id},{$addToSet:{'developers':{'name':user.name,'devid':developerid}}},{new:true})
+       developer.findOneAndUpdate({_id:developerid},{$addToSet:{'ongoing_projects':{'name':user.name,'proid':user.id,'currentStatus':"Not yet Started"}}},{new:true}).then(user=>{
+        project.findOneAndUpdate({_id:req.params.id},{$addToSet:{'developers':{'name':user.name,'devid':developerid,'currentStatus':"Not yet started"}}},{new:true})
         .then(user=>{
            user1.push(user);
         }).catch(err=>res.status(400).json(err));
@@ -297,5 +297,85 @@ app.get('/developerdetail/:id',(req,res)=>{
     }).catch(err=>{res.status(400),json(err)});
 })
 
+//getting projects of developer
+app.get('/getproject/:type',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(err)
+            res.status(400).json("not able to verify token")
+        else{
+           developer.findById({_id:authdata.user._id}).then(user=>{
+               if(user.ongoing_projects.length===0)
+                    res.status(200).json("No projects");
+                else
+                    res.status(200).json(user.ongoing_projects);
+           })
+        }
+    })
+})
+//getting status of a developer based on that particular project
+app.get('/getstatus/:proid',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(authdata){
+        developer.findById({_id:authdata.user._id}).then(user=>{
+            if(user){
+                const resData=user.ongoing_projects.filter(i=>{
+                    if(i.proid===req.params.proid)
+                       return i;
+                })
+                res.status(200).json(resData);
+            }
+            
+        }).catch(err=>{res.status(400).json(err)})
+    }
+        
+        else
+            res.status(400).json(err);
+            
+    })
+})
+
+//updating the status of a particular project
+app.post('/updatestatus/:proid',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(err)
+            res.status(400).json(err);
+        else{
+            project.update(
+                {_id:req.params.proid,'developers.devid':authdata.user._id},
+                {$set:{'developers.$.currentStatus':req.body.status}},(err,result)=>{
+                    if(err)
+                        res.status(400).json(err);
+                }
+            )
+           developer.update(
+            {_id:authdata.user._id,'ongoing_projects.proid':req.params.proid},
+            {$set:{'ongoing_projects.$.currentStatus':req.body.status}},(err,result)=>{
+                if(err)
+                    res.status(400).json(err)
+                else
+                    res.status(200).json(result);
+            }
+           ) 
+        }
+    })
+})
+
+//removing a developer from a that particular project
+app.delete('/deletedevfromproject/:devid/:proid',(req,res)=>{
+    project.findOneAndUpdate({_id:req.params.proid},{$pull:{'developers':{'devid':req.params.devid}}},{new:true}).then(user=>{
+        if(user){
+            developer.findOneAndUpdate({_id:req.params.devid},{$pull:{'ongoing_projects':{'proid':req.params.proid}}},{new:true}).
+            then(user=>{
+                if(user){
+                    res.status(200).json(user);
+                }
+                else
+                    res.status(400).json("undefiend error")
+            }).catch(err=>res.status(400).json(err));
+        }
+        else
+            res.status(400).json("undefined errro");
+    }).catch(err=>res.status(400).json(err));
+})
 
 app.listen(process.env.PORT||3002);

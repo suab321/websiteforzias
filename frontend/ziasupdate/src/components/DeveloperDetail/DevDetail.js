@@ -7,7 +7,7 @@ class DevDetail extends React.Component{
     constructor(props){
         super(props);
         this.state={data:[],showproject:""}
-        Axios.get(`http://localhost:3002/developerdetail/${this.props.match.params.id}`).then(res=>{
+        Axios.get(`http://localhost:3002/developerdetail/${this.props.match.params.devid}`).then(res=>{
             this.setState({data:res.data});
             console.log(this.state.data)
         })

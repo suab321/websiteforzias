@@ -44,7 +44,7 @@ class ProjectDetail extends React.Component{
                   </div><br/>
                   <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.developer}>Click to hide</button>
                   </div><br/>
-                  <DeveloperinProject style={{justifyContent:"center"}} id={this.props.match.params.id}/>   
+                  <DeveloperinProject style={{justifyContent:"center"}} proid={this.props.match.params.id}/>   
                 </div>
                 )
         }

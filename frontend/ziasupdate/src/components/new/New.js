@@ -37,7 +37,7 @@ class New extends React.Component{
         if(this.state.error){
             return(
                 <div style={{textAlign:"center"}}>
-                    <div class='form'>
+                    <div className='form'>
                     <div>
                     <label style={{fontSize: "2em"}}>New Project</label><br/><br/><br/>
                     <img src="https://s3.amazonaws.com/thumbnails.illustrationsource.com/huge.102.513291.JPG" alt="" width="200px" height="200px"/><br/><br/>

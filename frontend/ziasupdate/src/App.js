@@ -14,6 +14,7 @@ import DeveloperDashboard from './components/developerdashboard/DeveloperDashboa
 import AssigningDeveloper from './components/assigning_developer/AssigningDevelopers';
 import ProjectDetail from './components/showtable/ProjectDetail';
 import DevDetail from './components/DeveloperDetail/DevDetail';
+import ProjectforDev from './components/showtable/ProjectforDev';
 
 
 
@@ -27,8 +28,9 @@ class App extends Component {
             <Router>
               <div>
                 <switch>
-                  <Route path="/developerdetail/:id" component={DevDetail}/>
-                  <Route path="/assign/:id/" component={AssigningDeveloper}/>
+                  <Route path="/mypro/:proid" component={ProjectforDev}/>
+                  <Route path="/developerdetail/:devid" component={DevDetail}/>
+                  <Route path="/assign/:id" component={AssigningDeveloper}/>
                   <Route path="/password/:email" component={Password}/>
                   <Route path="/developerdashboard" component={DeveloperDashboard}/>
                   <Route exact path='/adminlogin' component={AdminLogin}/>
