@@ -1,6 +1,6 @@
 import React from 'react'
 import Axios from 'axios';
-import DeveloperinProject from './DeveloperinProject';
+import {DeveloperinProject1} from './DeveloperinProject';
 
 class ProjectDetail extends React.Component{
     constructor(props){
@@ -44,7 +44,9 @@ class ProjectDetail extends React.Component{
                   </div><br/>
                   <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.developer}>Click to hide</button>
                   </div><br/>
-                  <DeveloperinProject style={{justifyContent:"center"}} proid={this.props.match.params.id}/>   
+                  <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><a href={`/assign/${this.props.match.params.id}`}><p>Click to hide</p></a>
+                  </div><br/>
+                  <DeveloperinProject1 style={{justifyContent:"center"}} proid={this.props.match.params.id}/>   
                 </div>
                 )
         }

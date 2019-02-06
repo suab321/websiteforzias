@@ -230,7 +230,7 @@ app.post('/createproject',verify,(req,res)=>{
 
 //getting all the developers
 app.get('/get_all_developers',verify,(req,res)=>{
-    developer.find({}).then(user=>{
+    developer.find({},).then(user=>{
         res.status(200).json(user);
     }).catch(err=>{
         res.status(400).json([]);
@@ -284,12 +284,46 @@ app.get('/projectdetail/:id',verify,(req,res)=>{
     })
 })
 
+//getting details of project for developer
+app.get('/projectdetailfordev/:id',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        project.findById({_id:req.params.id},{details:true,developers:true}).then(user=>{
+            if(user)
+                res.status(200).json(user);
+            else
+                res.status(200).json("no one project");
+        }).catch(err=>res.status(400).json(err));
+    })
+})
+
 //getting developers in project
-app.get('/getdeveloperinproject/:id',(req,res)=>{
-    project.findById({_id:req.params.id},{developers:true}).then(user=>{
+app.get('/getdeveloperinproject/:proid',(req,res)=>{
+    project.findById({_id:req.params.proid},{developers:true}).then(user=>{
        res.status(200).json(user);
     }).catch(err=>{res.status(400).json(err)})
 })
+
+//getting developers in project for developers
+app.get('/getdeveloperinprojectfordev/:proid',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(authdata){
+            project.findById({_id:req.params.proid},{developer:true}).then(user=>{
+                if(user){
+                    const developers=user.developers.filter(i=>{
+                        if(i.devid!==authdata.user._id)
+                            return i;
+                    })
+                    res.status(200).json(developers);
+                }
+            }).catch(err=>{res.status(400).json(err)})
+        }
+        else
+            res.status(400).json(err);
+    })
+})
+
+
+
 //getting developers name based on their id
 app.get('/developerdetail/:id',(req,res)=>{
     developer.findById({_id:req.params.id}).then(user=>{
@@ -335,7 +369,7 @@ app.get('/getstatus/:proid',verify,(req,res)=>{
 })
 
 //updating the status of a particular project
-app.post('/updatestatus/:proid',verify,(req,res)=>{
+app.put('/updatestatus/:proid',verify,(req,res)=>{
     jwt.verify(req.token,"suab",(err,authdata)=>{
         if(err)
             res.status(400).json(err);
@@ -353,7 +387,7 @@ app.post('/updatestatus/:proid',verify,(req,res)=>{
                 if(err)
                     res.status(400).json(err)
                 else
-                    res.status(200).json(result);
+                    res.redirect(`http://localhost:3000/mypro/${req.params.proid}`)
             }
            ) 
         }
@@ -361,21 +395,34 @@ app.post('/updatestatus/:proid',verify,(req,res)=>{
 })
 
 //removing a developer from a that particular project
-app.delete('/deletedevfromproject/:devid/:proid',(req,res)=>{
-    project.findOneAndUpdate({_id:req.params.proid},{$pull:{'developers':{'devid':req.params.devid}}},{new:true}).then(user=>{
-        if(user){
-            developer.findOneAndUpdate({_id:req.params.devid},{$pull:{'ongoing_projects':{'proid':req.params.proid}}},{new:true}).
-            then(user=>{
-                if(user){
-                    res.status(200).json(user);
-                }
-                else
-                    res.status(400).json("undefiend error")
-            }).catch(err=>res.status(400).json(err));
-        }
-        else
-            res.status(400).json("undefined errro");
-    }).catch(err=>res.status(400).json(err));
+app.delete('/deletedevfromproject/:devid/:proid',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(authdata){
+        admin.findById({_id:authdata.user._id}).then(user=>{
+            if(user){
+                project.findOneAndUpdate({_id:req.params.proid},{$pull:{'developers':{'devid':req.params.devid}}},{new:true}).then(user=>{
+                    if(user){
+                        developer.findOneAndUpdate({_id:req.params.devid},{$pull:{'ongoing_projects':{'proid':req.params.proid}}},{new:true}).
+                        then(user=>{
+                            if(user){
+                                res.redirect(`http://localhost:3000/admindashboard`)
+                            }
+                            else
+                                res.status(400).json("undefiend error")
+                        }).catch(err=>res.status(400).json(err));
+                    }
+                    else
+                        res.status(400).json("undefined errro");
+                }).catch(err=>res.status(400).json(err));
+            }
+            else
+                res.status(400).json("You are not authorized to this delete");
+        })
+       }
+       else
+       res.status(400).json("You are not authorized to this delete");
+    })
+    
 })
 
 app.listen(process.env.PORT||3002);

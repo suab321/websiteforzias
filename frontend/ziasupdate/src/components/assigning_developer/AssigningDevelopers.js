@@ -11,18 +11,31 @@ class AssigningDeveloper extends React.Component{
         super(props);
         this.state={
           data:[],
+          developers:[],
           selection:[],
           selectAll:false
         };
         this.fetchData=this.fetchData.bind(this);
+          
     }
     fetchData(){
         Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
             if(res.status===200){
-                Axios.get('http://localhost:3002/get_all_developers',{headers:{Authorization: `Bearer ${res.data}`}})
+                Axios.get(`http://localhost:3002/get_all_developers`,{headers:{Authorization: `Bearer ${res.data}`}})
                 .then(res=>{
                     this.setState({data:res.data});
                 })
+                Axios.get(`http://localhost:3002/getdeveloperinproject/${this.props.match.params.proid}`).then(res=>{
+                  if(res.status===200)
+                    this.setState({developers:res.data.developers});
+                })
+                const activedeveloper=this.state.data.developers.filter(i=>{
+                  return this.state.developers.map(j=>{
+                    if(j._id===i.devid)
+                      return i;
+                  })
+                })
+                console.log(activedeveloper);
             }
         })
     }

@@ -30,7 +30,7 @@ class App extends Component {
                 <switch>
                   <Route path="/mypro/:proid" component={ProjectforDev}/>
                   <Route path="/developerdetail/:devid" component={DevDetail}/>
-                  <Route path="/assign/:id" component={AssigningDeveloper}/>
+                  <Route path="/assign/:proid" component={AssigningDeveloper}/>
                   <Route path="/password/:email" component={Password}/>
                   <Route path="/developerdashboard" component={DeveloperDashboard}/>
                   <Route exact path='/adminlogin' component={AdminLogin}/>
