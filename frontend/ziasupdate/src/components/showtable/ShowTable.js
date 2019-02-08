@@ -9,6 +9,9 @@ class ShowTable1 extends React.Component{
     constructor(props){
         super(props);
         this.state={data:[]};
+    }
+    componentWillReceiveProps(){
+        this.setState({data:[]});
         Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
             if(res.status===200){
                 Axios.get(`http://localhost:3002/project/${this.props.type}`,{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{
@@ -17,7 +20,6 @@ class ShowTable1 extends React.Component{
                 })
             }
         })
-        
     }
 
     render(){
@@ -41,6 +43,10 @@ class ShowTable2 extends React.Component{
     constructor(props){
         super(props);
         this.state={data:[]};
+    }
+
+    componentWillReceiveProps(){
+        this.setState({data:[]});
         Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
             if(res.status===200){
                 Axios.get(`http://localhost:3002/getproject/${this.props.type}`,{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{

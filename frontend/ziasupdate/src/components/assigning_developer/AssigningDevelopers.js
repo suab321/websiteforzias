@@ -63,11 +63,13 @@ class AssigningDeveloper extends React.Component{
     };
   
     isSelected = key => {
+      //console.log(key);
      
       return this.state.selection.includes(key);
     };
   
     logSelection = () => {
+      console.log(this.state.selection);
       Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
         if(res.status===200){
           Axios.put(`http://localhost:3002/assigndevelopers/${this.props.match.params.proid}`,{developers:this.state.selection},{headers:{Authorization: `Bearer ${res.data}`}})

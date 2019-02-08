@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {Route,Redirect,IndexRoute} from 'react-router';
+import {Route} from 'react-router';
 import AdminLogin from './components/adminlogin/AdminLogin';
 import DeveloperLogin from './components/developerlogin/DeveloperLogin';
 import DeveloperDetails from './components/details_for_developer/DetailsDeveloper';
@@ -15,6 +15,7 @@ import AssigningDeveloper from './components/assigning_developer/AssigningDevelo
 import ProjectDetail from './components/showtable/ProjectDetail';
 import DevDetail from './components/DeveloperDetail/DevDetail';
 import ProjectforDev from './components/showtable/ProjectforDev';
+import All_Developer from './components/alldeveloper/All_developer';
 
 
 
@@ -28,6 +29,7 @@ class App extends Component {
             <Router>
               <div>
                 <switch>
+                  <Route path="/all_developer" component={All_Developer}/>
                   <Route path="/mypro/:proid" component={ProjectforDev}/>
                   <Route path="/developerdetail/:devid" component={DevDetail}/>
                   <Route path="/assign/:proid" component={AssigningDeveloper}/>
@@ -44,15 +46,16 @@ class App extends Component {
                 <Navbar inverse fixedTop collapseOnSelect>
                     <Navbar.Header>
                       <Navbar.Brand>
-                        <a href="#brand"></a>
                       </Navbar.Brand>
                       <Navbar.Toggle />
                     </Navbar.Header>
                     <Navbar.Collapse>
                       <Nav>
-                          <NavDropdown eventKey={3} title="Add" id="basic-nav-dropdown"> 
+                          <NavDropdown eventKey={3} title="Add" id="basic-nav-dropdown">
+                          <MenuItem href="/developerdashboard" >Home</MenuItem> 
                           <MenuItem href="/new" >Add new user</MenuItem>
                           <MenuItem href="/newproject">Create New Project</MenuItem>
+                          <MenuItem href="/all_developer">Meet all the developers</MenuItem>
                           </NavDropdown>
                       </Nav>
                       <Nav pullRight>

@@ -2,11 +2,12 @@ import React from 'react';
 import Axios from 'axios';
 import {Button} from 'react-bootstrap';
 import {ShowTable1} from '../showtable/ShowTable';
+import {Redirect} from 'react-router';
 
 class AdminDashboard extends React.Component{
     constructor(props){
         super(props);
-        this.state={name:"",error:"",type:"",data:[]};
+        this.state={name:"",error:"",type:""};
         Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
             if(res.status===200){
                 Axios.get(`http://localhost:3002/cancreate`,{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{
@@ -14,7 +15,7 @@ class AdminDashboard extends React.Component{
                         this.setState({error:res.data})
                     }
             })
-        }
+           }
         })
             Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
                 if(res.status===200){
@@ -28,16 +29,15 @@ class AdminDashboard extends React.Component{
         console.log("yes");
     }
 
-   
     render(){
-        console.log(this.state.name)
+        console.log(this.state.error)
         if(this.state.error!=="yes"){
-        return(
-            <div style={{marginTop:"7em",justifyContent:"center"}}>
-                <h1 style={{textAlign:"center"}}>You are not an Admin</h1>
-            </div>
-        )
-    }
+            return(
+                <div style={{marginTop:"7em",justifyContent:"center"}}>
+                    <h1 style={{textAlign:"center"}}>You are not an Admin</h1>
+                </div>
+            )
+        }
     else{
         if(this.state.type===""){
          return(
@@ -57,7 +57,7 @@ class AdminDashboard extends React.Component{
                     <h1 style={{textAlign:"center"}}>Welcome home {this.state.name}</h1>
                     <div style={{paddingLeft:"2%"}}>
                     <Button onClick={()=>{this.setState({type:"ongoining"})}} bsStyle="info">Ongoing</Button>
-                    <Button onClick={()=>{this.setState({type:"success"})}} bsStyle="success">Completed</Button>
+                    <Button onClick={()=>{this.setState({type:"completed"})}} bsStyle="success">Completed</Button>
                     <Button onClick={()=>{this.setState({type:"notstarted"})}} bsStyle="warning">NotStarted</Button>
                     </div>
                     <ShowTable1 selected={this.selected} type={this.state.type}/>

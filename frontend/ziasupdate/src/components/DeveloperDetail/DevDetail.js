@@ -31,8 +31,6 @@ class DevDetail extends React.Component{
                 <h2>{this.state.data.name}</h2></div><br/>
                 <div style={{display:"flex"}}><h1>Skills: </h1>
                 <h2>{this.state.data.skills}</h2></div><br/>
-                <div style={{display:"flex"}}><h1>status: </h1>
-                <h2>{this.state.data.status}</h2></div><br/>
                 <div style={{display:"flex"}}><h1>Contact: </h1>
                 <h2>{this.state.data.contactNo}</h2></div><br/>
                 <button onClick={this.showprojects}>Show completed Projects</button>
@@ -75,7 +73,6 @@ class DevDetail extends React.Component{
                 return(
                 <div style={{justifyContent:"center",display:"flex",border:"1px solid black",width:"fit-content",height:"fit-content"}}>
                 <h1>{i.name}</h1>
-                <img height="5%" width="5%" src={remove}/>
                 <a href={`/ProjectDetail/${i.proid}`}><img height="30%" width="20%" src={info}/></a>
             </div>
                 )

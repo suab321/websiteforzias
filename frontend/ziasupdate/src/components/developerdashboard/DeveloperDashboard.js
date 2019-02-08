@@ -2,11 +2,12 @@ import React from 'react'
 import Axios from 'axios';
 import {Button} from 'react-bootstrap';
 import {ShowTable2} from '../showtable/ShowTable';
+import {Redirect} from 'react-router';
 
 class DeveloperDashoard extends React.Component{
     constructor(props){
         super(props);
-        this.state={name:"",error:"",type:""};
+        this.state={name:"",error:"yes",type:""};
 
         Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
             if(res.status===200){
@@ -16,10 +17,9 @@ class DeveloperDashoard extends React.Component{
                     else
                         this.setState({error:"yes"})
             })
-        }
+          }
         })
        
-
         Axios.get(`http://localhost:3002/user`,{withCredentials:true}).then(res=>{
             if(res.status===200){
                 Axios.get(`http://localhost:3002/name`,{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{
@@ -34,9 +34,7 @@ class DeveloperDashoard extends React.Component{
         console.log(this.state.error);
         if(this.state.error === "no"){
             return(
-            <div style={{textAlign:"center",marginTop:"7em"}}>
-            <h1>You are not Developer</h1>
-            </div>
+                <Redirect to='/admindashboard'/>
             )
         }
         else{
