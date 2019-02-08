@@ -237,20 +237,69 @@ app.get('/get_all_developers',verify,(req,res)=>{
     })
 })
 
+//getting all the developers
+app.get('/get_all_developers/:proid',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(authdata){
+            developer.find({}).then(user=>{
+                if(user){
+                    const d1=user;
+                    const d1_id=d1.map(i=>{return (i._id).toString()});
+                    //console.log(d1);
+                    //console.log(user)
+                    project.findById({_id:req.params.proid}).then(user=>{
+                        //console.log(d1_id);
+                        var activedev=[];
+                        var activedev_id=[];
+                        console.log(d1_id);
+                        var y=user.developers.map(i=>{return (i.devid)});
+                        var y1=JSON.stringify(y);
+                        d1_id.forEach(i=>{
+                            if(y1.indexOf(i) === -1)
+                                activedev_id.push(i);
+                        })
+                        console.log(activedev_id);
+                        activedev_id.forEach(i=>{
+                            var index=d1_id.indexOf(i)
+                            if(index !== -1)
+                                activedev.push(d1[index]);
+                        })
+                        console.log(activedev);
+                        res.status(200).json(activedev)
+                    })
+                }
+            })
+        }
+    })
+})
+
 //assigndevelopers to project
 app.put('/assigndevelopers/:id',verify,(req,res)=>{
-    var user1;
-   req.body.developers.map(developerid=>{
-       project.findById({_id:req.params.id}).then(user=>{
-       developer.findOneAndUpdate({_id:developerid},{$addToSet:{'ongoing_projects':{'name':user.name,'proid':user.id,'currentStatus':"Not yet Started"}}},{new:true}).then(user=>{
-        project.findOneAndUpdate({_id:req.params.id},{$addToSet:{'developers':{'name':user.name,'devid':developerid,'currentStatus':"Not yet started"}}},{new:true})
-        .then(user=>{
-           user1.push(user);
-        }).catch(err=>res.status(400).json(err));
-       }).catch(err=>res.status(400).json(err))
-   })
-   res.status(200).json(user1);
-})
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(err)
+            res.status(400).json(err);
+        else{
+            admin.findById({_id:authdata.user._id}).then(user=>{
+                if(user){
+                    var user1;
+                    req.body.developers.map(developerid=>{
+                    project.findById({_id:req.params.id}).then(user=>{
+                    developer.findOneAndUpdate({_id:developerid},{$addToSet:{'ongoing_projects':{'name':user.name,'proid':user.id,'currentStatus':"Not yet Started"}}},{new:true}).then(user=>{
+                     project.findOneAndUpdate({_id:req.params.id},{$addToSet:{'developers':{'name':user.name,'devid':developerid,'currentStatus':"Not yet started"}}},{new:true})
+                     .then(user=>{
+                        console.log(user);
+                     }).catch((err)=>console.log(err));
+                    }).catch((err)=>console.log(err))
+                })
+                res.redirect('http://localhost:3000/admindashboard');
+                 })
+                }
+                else{
+                    res.status(400).json("You are not an admin");
+                }
+            }).catch(err=>{res.status(400).json(err)});   
+    }  
+    })
 })
 
 //getting project details

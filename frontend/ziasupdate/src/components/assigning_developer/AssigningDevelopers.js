@@ -21,7 +21,7 @@ class AssigningDeveloper extends React.Component{
     fetchData(){
         Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
             if(res.status===200){
-                Axios.get(`http://localhost:3002/get_all_developers`,{headers:{Authorization: `Bearer ${res.data}`}})
+                Axios.get(`http://localhost:3002/get_all_developers/${this.props.match.params.proid}`,{headers:{Authorization: `Bearer ${res.data}`}})
                 .then(res=>{
                     this.setState({data:res.data});
                 })
@@ -29,13 +29,6 @@ class AssigningDeveloper extends React.Component{
                   if(res.status===200)
                     this.setState({developers:res.data.developers});
                 })
-                const activedeveloper=this.state.data.developers.filter(i=>{
-                  return this.state.developers.map(j=>{
-                    if(j._id===i.devid)
-                      return i;
-                  })
-                })
-                console.log(activedeveloper);
             }
         })
     }
@@ -77,7 +70,7 @@ class AssigningDeveloper extends React.Component{
     logSelection = () => {
       Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
         if(res.status===200){
-          Axios.put(`http://localhost:3002/assigndevelopers/${this.props.match.params.id}`,{developers:this.state.selection},{headers:{Authorization: `Bearer ${res.data}`}})
+          Axios.put(`http://localhost:3002/assigndevelopers/${this.props.match.params.proid}`,{developers:this.state.selection},{headers:{Authorization: `Bearer ${res.data}`}})
         }
       })
     };
