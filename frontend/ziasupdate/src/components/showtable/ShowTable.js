@@ -11,6 +11,7 @@ class ShowTable1 extends React.Component{
         this.state={data:[]};
     }
     componentWillReceiveProps(){
+        console.log(this.props.type)
         this.setState({data:[]});
         Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
             if(res.status===200){
@@ -25,7 +26,9 @@ class ShowTable1 extends React.Component{
     render(){
         const card=this.state.data.map(i=>{
             return(
-                <Card1 i={i}/> 
+                <div>
+                <Card1 i={i}/>
+                </div>
             )
         })
         return(

@@ -1,6 +1,5 @@
 import React from 'react'
 import '../adminlogin/admin.css';
-import url from '../url'
 
 
 class DetailsDeveloper extends React.Component{

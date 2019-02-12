@@ -146,7 +146,7 @@ app.post('/updatepassword/:email',(req,res)=>{
             db.save().then(user=>{
                 if(user){
                     console.log(user)
-                    temporary.findOneAndRemove({email:req.params.email});
+                    temporary.findOneAndDelete({email:req.params.email});
                     req.session.user=user;
                     res.redirect(`${url}/admindashboard`)
                 }
@@ -163,7 +163,7 @@ app.post('/updatepassword/:email',(req,res)=>{
             db.save().then(user=>{
                 if(user){
                     console.log(user)
-                    temporary.findOneAndRemove({email:req.params.email});
+                    temporary.findOneAndDelete({email:req.params.email});
                     //req.session.user=user;
                     res.redirect(`${url}/developers_details/${user.email}`)
                 }
@@ -213,6 +213,7 @@ app.get('/cancreate',verify,(req,res)=>{
         }
     })
 })
+
 //creatingproject
 app.post('/createproject',verify,(req,res)=>{
     const db=new project   
@@ -392,11 +393,21 @@ app.get('/getproject/:type',verify,(req,res)=>{
         if(err)
             res.status(400).json("not able to verify token")
         else{
+           //req.params.type;
            developer.findById({_id:authdata.user._id}).then(user=>{
+               if(req.params.type==="ongoing_projects"){
+               //console.log(user.req.params.type)
                if(user.ongoing_projects.length===0)
                     res.status(200).json("No projects");
                 else
                     res.status(200).json(user.ongoing_projects);
+               }
+               else{
+                if(user.projects_completed.length===0)
+                    res.status(200).json("No projects");
+                else
+                    res.status(200).json(user.projects_completed);
+               }
            })
         }
     })
@@ -449,6 +460,89 @@ app.put('/updatestatus/:proid',verify,(req,res)=>{
     })
 })
 
+
+//assigning task to a particular developer for a particular project
+app.put('/assigntask/:proid/:devid',(req,res)=>{
+    var adminname='';
+    //admin.findById({_id:req.params.proid}).then(user=>{adminname=user.name});
+    var obj={"task":req.body.task,"enddate":req.body.enddate,"iscomplete":0,'proid':req.body.proid};
+    developer.update({
+        _id:req.params.devid,
+        'ongoing_projects.proid':req.params.proid
+    },{$push:{'ongoing_projects.$.tasks':obj}},{new:true}).then(user=>{
+        res.status(200).json(user);
+    })
+})
+
+//updating task for a particular developer for a particular project marking if its complete or not
+app.put('/updateassigntask/:proid/:taskid',verify,(req,res)=>{
+   jwt.verify(req.token,'suab',(err,authdata)=>{
+    developer.update({
+        _id:authdata.user._id,
+        'ongoing_projects.proid':req.params.proid,
+         'ongoing_projects.tasks._id':req.params.taskid
+    },{$pull:{'ongoing_projects.$.tasks':{'_id':req.params.taskid}}},{new:true}).then(user=>{
+        
+        var obj={"task":req.body.task,"enddate":req.body.enddate,"iscomplete":req.body.iscomplete,'proid':req.body.proid};
+        developer.update({
+        _id:authdata.user._id,
+        'ongoing_projects.proid':req.params.proid
+    },{$push:{'ongoing_projects.$.tasks':obj}},{new:true}).then(user=>{
+        res.status(200).json(user);
+    })
+    })
+    
+    //console.log("successfully deleted")
+   })
+})
+
+//getting the tasks of a developer of a certain project
+app.get('/getprojectstask/:proid',(req,res)=>{
+    //console.log(req.session.user._id);
+    developer.findById({_id:req.session.user._id},{ongoing_projects:true,_id:false}).then(user=>{
+        if(user){
+            //res.json(user[0])
+            var pro=user.ongoing_projects.filter(i=>{
+                if(i.proid === req.params.proid)
+                    return i;
+            })
+            var task=pro[0].tasks.map(i=>{return i;})
+            res.status(200).json(task)
+        }
+    })
+})
+//getting task of developer of a particular project for admin
+app.get('/getprojectstaskforadmin/:proid/:devid',(req,res)=>{
+    //console.log(req.session.user._id);
+    developer.findById({_id:req.params.devid},{ongoing_projects:true,_id:false}).then(user=>{
+        if(user){
+            //res.json(user[0])
+            var pro=user.ongoing_projects.filter(i=>{
+                if(i.proid === req.params.proid)
+                    return i;
+            })
+            var task=pro[0].tasks.map(i=>{return i;})
+            res.status(200).json(task)
+        }
+    })
+})
+
+//deleting a particular task of a developer
+app.get('/deletetask/:proid/:devid/:taskid',verify,(req,res)=>{
+    jwt.verify(req.token,'suab',(err,authdata)=>{
+        admin.findById({_id:authdata.user._id}).then(user=>{
+            developer.update({
+                _id:req.params.devid,
+                'ongoing_projects.proid':req.params.proid,
+            },{$pull:{'ongoing_projects.$.tasks':{'_id':req.params.taskid}}}).then(user=>{
+                res.status(200).json(user);
+            })
+        })
+    })
+})
+
+
+
 //updating the type of project either notstarted completed or ongoinging
 app.put('/updateprojectstatus/:proid',verify,(req,res)=>{
     jwt.verify(req.token,"suab",(err,authdata)=>{
@@ -469,6 +563,36 @@ app.put('/updateprojectstatus/:proid',verify,(req,res)=>{
 })
 
 
+//removing a project
+app.delete('/removeproject/:proid',verify,(req,res)=>{
+    jwt.verify(req.token,"suab",(err,authdata)=>{
+        if(err){
+            res.status(400).json(err);
+        }
+        else{
+            admin.findById({_id:authdata.user._id}).then(user=>{
+                if(user){
+                    project.findByIdAndRemove({_id:req.params.proid}).then(user=>{
+                        //console.log(user);
+                        var users=user.developers.map(i=>{return (i.devid)});
+                        developer.find({}).then(user=>{
+                           users=JSON.stringify(users);
+                           console.log("485"+users)
+                            user.forEach(i=>{
+                                if(users.indexOf(i._id) !== -1){
+                                    developer.findByIdAndUpdate({_id:i._id},{$pull:{'ongoing_projects':{'proid':req.params.proid}}},{new:true}).then(user=>{
+                                        console.log("489"+user)
+                                    }).catch(err=>{console.log("490"+err)})
+                                }
+                            })
+                            res.status(200).json();
+                        })
+                    })
+                }
+            })
+        }
+    })
+})
 
 
 //removing a developer from a that particular project

@@ -2,7 +2,6 @@ import React from 'react';
 import Axios from 'axios';
 import {Button} from 'react-bootstrap';
 import {ShowTable1} from '../showtable/ShowTable';
-import {Redirect} from 'react-router';
 
 class AdminDashboard extends React.Component{
     constructor(props){
@@ -44,7 +43,7 @@ class AdminDashboard extends React.Component{
                 <div style={{marginTop:"7em",justifyContent:"center"}}>
                     <h1 style={{textAlign:"center"}}>Welcome home {this.state.name}</h1>
                     <div style={{paddingLeft:"2%"}}>
-                    <Button onClick={()=>{this.setState({type:"ongoining"})}} bsStyle="info">Ongoing</Button>
+                    <Button onClick={()=>{this.setState({type:"ongoing"})}} bsStyle="info">Ongoing</Button>
                     <Button onClick={()=>{this.setState({type:"completed"})}} bsStyle="success">Completed</Button>
                     <Button onClick={()=>{this.setState({type:"notstarted"})}} bsStyle="warning">NotStarted</Button>
                     </div>
@@ -56,7 +55,7 @@ class AdminDashboard extends React.Component{
                 <div style={{marginTop:"7em",justifyContent:"center"}}>
                     <h1 style={{textAlign:"center"}}>Welcome home {this.state.name}</h1>
                     <div style={{paddingLeft:"2%"}}>
-                    <Button onClick={()=>{this.setState({type:"ongoining"})}} bsStyle="info">Ongoing</Button>
+                    <Button onClick={()=>{this.setState({type:"ongoing"})}} bsStyle="info">Ongoing</Button>
                     <Button onClick={()=>{this.setState({type:"completed"})}} bsStyle="success">Completed</Button>
                     <Button onClick={()=>{this.setState({type:"notstarted"})}} bsStyle="warning">NotStarted</Button>
                     </div>
