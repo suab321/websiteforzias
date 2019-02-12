@@ -193,7 +193,8 @@ class DeveloperinProject1 extends React.Component{
 class DeveloperinProject2 extends React.Component{
     constructor(props){
         super(props);
-        this.state={data:[]}
+        this.state={data:[],email:'',contact:''}
+        this.getdetail=this.getdetail.bind(this);
         Axios.get(`http://localhost:3002/user`,{withCredentials:true}).then(res=>{
             if(res.status===200){
             Axios.get(`http://localhost:3002/getdeveloperinprojectfordev/${this.props.proid}`,{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{
@@ -202,6 +203,9 @@ class DeveloperinProject2 extends React.Component{
             })
             }
         })
+    }
+    getdetail(i){
+        Axios.get(`http://localhost:3002/getemailiddeveloper/${i.devid}`).then(res=>{this.setState({email:res.data.email,contact:res.data.contactNo})})
     }
 
     yes(){
@@ -214,9 +218,9 @@ class DeveloperinProject2 extends React.Component{
     render(){
         const developers=this.state.data.map(i=>{
             return(
-                <div style={{justifyContent:"center",display:"flex",border:"1px solid black",width:"fit-content",height:"fit-content",}}>
+                    <div style={{justifyContent:"center",display:"flex",border:"1px solid black",width:"fit-content",height:"fit-content",}}>
                     <h1>{i.name}</h1>
-                    <h6>{i.currentStatus}</h6>
+                    <h6>{i.currentStatus}</h6><br/>
                 </div>
             )
         })

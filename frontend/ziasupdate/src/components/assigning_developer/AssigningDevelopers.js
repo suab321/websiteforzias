@@ -3,6 +3,7 @@ import ReactTable from 'react-table';
 import checkboxHOC from "react-table/lib/hoc/selectTable";
 import "react-table/react-table.css";
 import Axios from 'axios';
+import {Redirect} from 'react-router';
 
 const CheckboxTable=new checkboxHOC(ReactTable);
 
@@ -13,7 +14,8 @@ class AssigningDeveloper extends React.Component{
           data:[],
           developers:[],
           selection:[],
-          selectAll:false
+          selectAll:false,
+          redirect:false
         };
         this.fetchData=this.fetchData.bind(this);
           
@@ -69,6 +71,7 @@ class AssigningDeveloper extends React.Component{
     };
   
     logSelection = () => {
+      this.setState({redirect:true});
       console.log(this.state.selection);
       Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
         if(res.status===200){
@@ -91,7 +94,7 @@ class AssigningDeveloper extends React.Component{
         selectType: "checkbox",
       };
 
-
+        if(!this.state.redirect){
         return (
           <div style={{width:"80%",margin:"5em 15%"}}>
           <h1>{this.props.match.params.id}</h1>
@@ -120,7 +123,13 @@ class AssigningDeveloper extends React.Component{
             />
             <br />
           </div>
-        );
+        )
+          }
+          else{
+            return(
+            <Redirect to="/admindashboard"/>
+            )
+          }
       }
 }
 export default AssigningDeveloper;

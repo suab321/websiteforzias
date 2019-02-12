@@ -45,7 +45,6 @@ class AdminDashboard extends React.Component{
                     <div style={{paddingLeft:"2%"}}>
                     <Button onClick={()=>{this.setState({type:"ongoing"})}} bsStyle="info">Ongoing</Button>
                     <Button onClick={()=>{this.setState({type:"completed"})}} bsStyle="success">Completed</Button>
-                    <Button onClick={()=>{this.setState({type:"notstarted"})}} bsStyle="warning">NotStarted</Button>
                     </div>
                 </div>
             )
@@ -57,7 +56,6 @@ class AdminDashboard extends React.Component{
                     <div style={{paddingLeft:"2%"}}>
                     <Button onClick={()=>{this.setState({type:"ongoing"})}} bsStyle="info">Ongoing</Button>
                     <Button onClick={()=>{this.setState({type:"completed"})}} bsStyle="success">Completed</Button>
-                    <Button onClick={()=>{this.setState({type:"notstarted"})}} bsStyle="warning">NotStarted</Button>
                     </div>
                     <ShowTable1 selected={this.selected} type={this.state.type}/>
                 </div>

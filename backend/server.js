@@ -280,6 +280,16 @@ app.get('/get_all_developers/:proid',verify,(req,res)=>{
     })
 })
 
+//gettting devloper detail based on their id
+app.get('/getemailiddeveloper/:devid',(req,res)=>{
+    developer.findById({_id:req.params.devid}).then(user=>{
+        if(user){
+            res.status(200).json(user);
+        }
+        else res.status(400).json(err)
+    }).catch(err=>{res.status(400).json(err)})
+})
+
 //assigndevelopers to project
 app.put('/assigndevelopers/:id',verify,(req,res)=>{
     jwt.verify(req.token,"suab",(err,authdata)=>{
@@ -357,6 +367,17 @@ app.get('/getdeveloperinproject/:proid',(req,res)=>{
     project.findById({_id:req.params.proid},{developers:true}).then(user=>{
        res.status(200).json(user);
     }).catch(err=>{res.status(400).json(err)})
+})
+
+//updating project details
+app.put('/updateprojects/:proid',verify,(req,res)=>{
+    jwt.verify(req.token,'suab',(err,authdata)=>{
+        admin.findById({_id:authdata.user._id}).then(user=>{
+            project.findByIdAndUpdate({_id:req.params.proid},{details:req.body.details,enddate:req.body.enddate},{new:true}).then(user=>{
+                res.status(200).json(user);
+            })
+        })
+    })
 })
 
 //getting developers in project for developers
@@ -491,17 +512,13 @@ app.put('/updateassigntask/:proid/:taskid',verify,(req,res)=>{
         res.status(200).json(user);
     })
     })
-    
-    //console.log("successfully deleted")
    })
 })
 
 //getting the tasks of a developer of a certain project
 app.get('/getprojectstask/:proid',(req,res)=>{
-    //console.log(req.session.user._id);
     developer.findById({_id:req.session.user._id},{ongoing_projects:true,_id:false}).then(user=>{
         if(user){
-            //res.json(user[0])
             var pro=user.ongoing_projects.filter(i=>{
                 if(i.proid === req.params.proid)
                     return i;
@@ -516,7 +533,6 @@ app.get('/getprojectstask/:proid',(req,res)=>{
 app.get('/getprojectstasksforadmin/:proid/:devid',(req,res)=>{
     developer.findOne({_id:req.params.devid},{ongoing_projects:true,_id:false}).then(user=>{
         if(user){
-            //console.log("519"+user);
             var pro=user.ongoing_projects.filter(i=>{
                 if(i.proid === req.params.proid)
                     return i;

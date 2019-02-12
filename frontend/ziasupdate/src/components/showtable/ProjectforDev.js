@@ -39,7 +39,10 @@ class ProjectforDev extends React.Component{
         Axios.get(`http://localhost:3002/user`,{withCredentials:true}).then(res=>{
             if(res.status===200)
             {
-                Axios.put(`http://localhost:3002/updatestatus/${this.props.match.params.proid}`,{status:`${this.input.current.value}`},{headers:{Authorization: `Bearer ${res.data}`}})
+                Axios.put(`http://localhost:3002/updatestatus/${this.props.match.params.proid}`,{status:`${this.input.current.value}`},{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{
+                    if(res.status === 200||res.status === 304)
+                        this.setState({showdeveloper:0})
+                })
             }
         })
     }
@@ -75,7 +78,7 @@ class ProjectforDev extends React.Component{
        Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
            if(res.status === 200){
             Axios.put(`http://localhost:3002/updateassigntask/${this.props.match.params.proid}/${i._id}`,{task:i.task,enddate:i.enddate,iscomplete:iscomplete,proid:i.proid},{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{
-                console.log(res);
+                this.setState({showdeveloper:0})
             })
            }
        })
@@ -160,7 +163,8 @@ class ProjectforDev extends React.Component{
                   </div><br/>
                   {task}
                 </div>
-            </div>)
+            </div>
+            )
         }
     }
 }

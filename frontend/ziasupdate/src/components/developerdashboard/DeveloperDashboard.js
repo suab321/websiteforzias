@@ -45,7 +45,6 @@ class DeveloperDashoard extends React.Component{
                 <div style={{paddingLeft:"2%"}}>
                     <Button onClick={()=>{this.setState({type:"ongoing_projects"})}} bsStyle="info">Ongoing</Button>
                     <Button onClick={()=>{this.setState({type:"projects_completed"})}} bsStyle="success">Completed</Button>
-                    <Button onClick={()=>{this.setState({type:"notstarted"})}} bsStyle="warning">NotStarted</Button>
                     </div>
                 </div>
             )
@@ -57,7 +56,6 @@ class DeveloperDashoard extends React.Component{
                     <div style={{paddingLeft:"2%"}}>
                     <Button onClick={()=>{this.setState({type:"ongoing_projects"})}} bsStyle="info">Ongoing</Button>
                     <Button onClick={()=>{this.setState({type:"projects_completed"})}} bsStyle="success">Completed</Button>
-                    <Button onClick={()=>{this.setState({type:"notstarted"})}} bsStyle="warning">NotStarted</Button>
                     </div>
                     <ShowTable2 type={this.state.type}/>
                 </div>
