@@ -511,33 +511,37 @@ app.get('/getprojectstask/:proid',(req,res)=>{
         }
     })
 })
+
 //getting task of developer of a particular project for admin
-app.get('/getprojectstaskforadmin/:proid/:devid',(req,res)=>{
-    //console.log(req.session.user._id);
-    developer.findById({_id:req.params.devid},{ongoing_projects:true,_id:false}).then(user=>{
+app.get('/getprojectstasksforadmin/:proid/:devid',(req,res)=>{
+    developer.findOne({_id:req.params.devid},{ongoing_projects:true,_id:false}).then(user=>{
         if(user){
-            //res.json(user[0])
+            //console.log("519"+user);
             var pro=user.ongoing_projects.filter(i=>{
                 if(i.proid === req.params.proid)
                     return i;
-            })
+            });
             var task=pro[0].tasks.map(i=>{return i;})
             res.status(200).json(task)
+        }
+        else{
+            console.log(err)
         }
     }).catch(err=>res.status(400).json(err))
 })
 
 //deleting a particular task of a developer
-app.get('/deletetask/:proid/:devid/:taskid',verify,(req,res)=>{
+app.delete('/deletetask/:proid/:devid/:taskid',verify,(req,res)=>{
     jwt.verify(req.token,'suab',(err,authdata)=>{
         admin.findById({_id:authdata.user._id}).then(user=>{
             developer.update({
                 _id:req.params.devid,
                 'ongoing_projects.proid':req.params.proid,
+                'ongoing_projects.tasks._id':req.params.taskid
             },{$pull:{'ongoing_projects.$.tasks':{'_id':req.params.taskid}}}).then(user=>{
                 res.status(200).json(user);
-            })
-        })
+            }).catch(err=>{res.status(400).json(err)})
+        }).catch(err=>res.status(400).json(err))
     })
 })
 

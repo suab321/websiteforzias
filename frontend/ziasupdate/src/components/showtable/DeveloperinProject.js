@@ -26,11 +26,13 @@ class DeveloperinProject1 extends React.Component{
         this.taskref=React.createRef();
         this.dateref=React.createRef();
         this.showtasks=this.showtasks.bind(this);
+        this.sort=this.sort.bind(this);
+        this.removetask=this.removetask.bind(this);
         this.closeModal=this.closeModal.bind(this);
         this.delete=this.delete.bind(this);
         this.openmodal=this.openmodal.bind(this);
         this.assign=this.assign.bind(this);
-        this.state={data:[],isModalOpen:false,devid:'',showtask:false,tasks:[]}
+        this.state={data:[],isModalOpen:false,devid:'',showtask:false,tasks:[],devid_for_task_removal:''}
         Axios.get(`http://localhost:3002/getdeveloperinproject/${this.props.proid}`).then(res=>{
             this.setState({data:res.data.developers}) 
         })
@@ -61,9 +63,9 @@ class DeveloperinProject1 extends React.Component{
     }
 
     showtasks(i){
-        Axios.get(`http://localhost:3002/getprojectstaskforadmin/${this.props.proid}/${i._id}`).then(res=>{
-            if(res.status === 200 || 304)
-                this.setState({tasks:res.data,showtask:true});
+        console.log(i);
+        Axios.get(`http://localhost:3002/getprojectstasksforadmin/${this.props.proid}/${i.devid}`).then(res=>{
+            this.setState({tasks:res.data,showtask:true,devid_for_task_removal:i.devid});
         })  
     }
     yes(){
@@ -87,6 +89,31 @@ class DeveloperinProject1 extends React.Component{
             }
         })
     }
+    sort(){
+        var  task=this.state.tasks;
+        for(var i=0;i<task.length;i++){
+            for(var j=0;j<task.length;j++){
+                if(task[i].iscomplete>task[j].iscomplete){
+                    var swap=task[i];
+                    task[i]=task[j];
+                    task[j]=swap;
+                }
+            }
+        }
+        return task;
+    }
+    removetask(id){
+        var devid=this.state.devid_for_task_removal;
+        console.log(this.props.proid,devid,id)
+       Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
+           if(res.status === 200 || res.status === 304){
+            Axios.delete(`http://localhost:3002/deletetask/${this.props.proid}/${devid}/${id}`,{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{
+                if(res.status === 200 || 304)
+                    alert('Deleted task');
+            })
+           }
+       })
+    }
 
     render(){
         const developers=this.state.data.map(i=>{
@@ -101,18 +128,17 @@ class DeveloperinProject1 extends React.Component{
                 </div>
             )
         })
-        var task=this.state.tasks.map(i=>{
+        var task_sorted=this.sort();
+        var task=task_sorted.map(i=>{
             if(i.iscomplete){
                 return(
                     <div style={{background:'green'}}>
                     <h3>Completed Tasks</h3>
                         <div style={{justifyContent:"flex"}}>
                             <h6>task:</h6>{i.task}
-                            <button style={{textAlign:"right"}}>mark as incomplete</button>
+                            <h6>endate:</h6>{i.enddate}
+                            <img onClick={()=>this.removetask(i.devid,i.name)} height="5%" width="5%" src={remove}/>
                         </div>
-                        {/* <div style={{justifyContent:"flex"}}>
-                            
-                        </div> */}
                     </div>
                 )
             }
@@ -125,7 +151,7 @@ class DeveloperinProject1 extends React.Component{
                         </div>
                         <div style={{justifyContent:"flex"}}>
                             <h6>endate:</h6>{i.enddate}
-                            <button style={{textAlign:"right"}} onClick={()=>{this.mark(1,i)}}>mark as complete</button>
+                            <img onClick={()=>this.removetask(i._id)} height="5%" width="5%" src={remove}/>
                         </div>
                     </div>
                 )
@@ -190,9 +216,7 @@ class DeveloperinProject2 extends React.Component{
             return(
                 <div style={{justifyContent:"center",display:"flex",border:"1px solid black",width:"fit-content",height:"fit-content",}}>
                     <h1>{i.name}</h1>
-                    {/* <img onClick={()=>this.delete(i.devid,i.name)} height="5%" width="5%" src={remove}/> */}
                     <h6>{i.currentStatus}</h6>
-                    {/* <a href={`/developerdetail/${i.devid}/${this.props.proid}`}><img height="30%" width="20%" src={info}/></a> */}
                 </div>
             )
         })
