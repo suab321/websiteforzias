@@ -25,7 +25,7 @@ class DeveloperinProject1 extends React.Component{
         //console.log(Cookies.get('email'));
         this.taskref=React.createRef();
         this.dateref=React.createRef();
-        this.showtask=this.showtask.bind(this);
+        this.showtasks=this.showtasks.bind(this);
         this.closeModal=this.closeModal.bind(this);
         this.delete=this.delete.bind(this);
         this.openmodal=this.openmodal.bind(this);
@@ -60,7 +60,7 @@ class DeveloperinProject1 extends React.Component{
           })
     }
 
-    showtask(i){
+    showtasks(i){
         Axios.get(`http://localhost:3002/getprojectstaskforadmin/${this.props.proid}/${i._id}`).then(res=>{
             if(res.status === 200 || 304)
                 this.setState({tasks:res.data,showtask:true});
@@ -97,7 +97,7 @@ class DeveloperinProject1 extends React.Component{
                     <h6>{i.currentStatus}</h6>
                     <a href={`/developerdetail/${i.devid}`}><img height="30%" width="20%" src={info}/></a>
                     <button onClick={()=>{this.openmodal(i.devid)}}>Assign Task</button>
-                    <button onClick={()=>{showtask(i)}}>Tasks</button>
+                    <button onClick={()=>{this.showtasks(i)}}>Tasks</button>
                 </div>
             )
         })
@@ -108,7 +108,7 @@ class DeveloperinProject1 extends React.Component{
                     <h3>Completed Tasks</h3>
                         <div style={{justifyContent:"flex"}}>
                             <h6>task:</h6>{i.task}
-                            <button style={{textAlign:"right"}} onClick={()=>{this.mark(0,i)}}>mark as incomplete</button>
+                            <button style={{textAlign:"right"}}>mark as incomplete</button>
                         </div>
                         {/* <div style={{justifyContent:"flex"}}>
                             

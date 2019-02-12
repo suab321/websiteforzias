@@ -524,7 +524,7 @@ app.get('/getprojectstaskforadmin/:proid/:devid',(req,res)=>{
             var task=pro[0].tasks.map(i=>{return i;})
             res.status(200).json(task)
         }
-    })
+    }).catch(err=>res.status(400).json(err))
 })
 
 //deleting a particular task of a developer
