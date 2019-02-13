@@ -5,6 +5,7 @@ import info from '../assets/info.png';
 import {confirmAlert} from 'react-confirm-alert';
 import Modal from 'react-modal';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import './showtable.css';
 
 
 
@@ -118,49 +119,63 @@ class DeveloperinProject1 extends React.Component{
     render(){
         const developers=this.state.data.map(i=>{
             return(
-                <div style={{justifyContent:"center",display:"flex",border:"1px solid black",width:"fit-content",height:"fit-content",}}>
-                    <h1>{i.name}</h1>
-                    <img onClick={()=>this.delete(i.devid,i.name)} height="5%" width="5%" src={remove}/>
-                    <h6>{i.currentStatus}</h6>
-                    <a href={`/developerdetail/${i.devid}`}><img height="30%" width="20%" src={info}/></a>
-                    <button onClick={()=>{this.openmodal(i.devid)}}>Assign Task</button>
-                    <button onClick={()=>{this.showtasks(i)}}>Tasks</button>
+                <div className="developers_card">
+                    <h4 style={{font:'bold'}}>Name:{i.name}</h4>
+                    <h4 style={{font:'bold'}}>Status:{i.currentStatus}</h4>
+                    <div>
+                    <img onClick={()=>this.delete(i.devid,i.name)} height="20%" width="20%" src={remove}/>
+                    <a href={`/developerdetail/${i.devid}`}><img height="20%" width="20%" src={info}/></a></div><br></br>
+                    <button style={{fontSize:'70%',background:'transparent',border:'transparent'}} onClick={()=>{this.openmodal(i.devid)}}>AssignTask</button>
+                    <button style={{fontSize:'70%',background:'transparent',border:'transparent'}} onClick={()=>{this.showtasks(i)}}>Tasks</button>
                 </div>
             )
         })
+
         var task_sorted=this.sort();
-        var task=task_sorted.map(i=>{
+        var task;
+        if(task_sorted.length === 0)
+            task=<h1 style={{textAlign:'center'}}>No Task has been assigned</h1>
+        else{
+         task=task_sorted.map(i=>{
             if(i.iscomplete){
                 return(
-                    <div style={{background:'green'}}>
+                    <div className="task_card" style={{background:'green'}}>
                     <h3>Completed Tasks</h3>
                         <div style={{justifyContent:"flex"}}>
-                            <h6>task:</h6>{i.task}
-                            <h6>endate:</h6>{i.enddate}
-                            <img onClick={()=>this.removetask(i.devid,i.name)} height="5%" width="5%" src={remove}/>
+                            <h6>task:{i.task}</h6>
+                            <h6>endate:{i.enddate}</h6>
+                            <img onClick={()=>this.removetask(i._id)} height="20%" width="20%" src={remove}/>
                         </div>
                     </div>
                 )
             }
             else{
                 return(
-                    <div style={{background:'red'}}>
+                    <div className="task_card" style={{background:'red'}}>
                     <h3>Yet To be Finished Tasks</h3>
                         <div style={{justifyContent:"flex"}}>
-                            <h6>task:</h6>{i.task}
+                            <h6>task:{i.task}</h6>
                         </div>
                         <div style={{justifyContent:"flex"}}>
-                            <h6>endate:</h6>{i.enddate}
-                            <img onClick={()=>this.removetask(i._id)} height="5%" width="5%" src={remove}/>
+                            <h6>endate:{i.enddate}</h6>
+                            <img onClick={()=>this.removetask(i._id)} height="20%" width="20%" src={remove}/>
                         </div>
                     </div>
                 )
             }
         })
+    }
         if(this.state.showtask){
+            if(task !== undefined){
             return(
                 <div>{task}</div>
             )
+            }
+            else{
+                return(
+                    <div style={{textAlign:"center"}}>No task has been assigned</div>
+                )
+            }
         }
         else{
         return(
@@ -216,14 +231,21 @@ class DeveloperinProject2 extends React.Component{
     }
 
     render(){
-        const developers=this.state.data.map(i=>{
+        var developers;
+        if(this.state.data.length === 0){
+            developers=<h1 style={{textAlign:'center'}}>NO Other Developes is Present!</h1>
+        }
+        else{
+         developers=this.state.data.map(i=>{
             return(
-                    <div style={{justifyContent:"center",display:"flex",border:"1px solid black",width:"fit-content",height:"fit-content",}}>
+                    <div style={{margin:"1% 2%",marginLeft:'30%',padding:"1% 2%"}} className="developers_card">
                     <h1>{i.name}</h1>
                     <h6>{i.currentStatus}</h6><br/>
+                    <a href={`/developerdetail2/${i.devid}`}><img height="20%" width="20%" src={info}/></a>
                 </div>
             )
         })
+    }
         return(
             <div>
            <h1>{developers}</h1>

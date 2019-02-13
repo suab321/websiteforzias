@@ -40,7 +40,7 @@ class DeveloperDashoard extends React.Component{
         else{
             if(this.state.type === ""){
             return(
-                <div style={{textAlign:"center",marginTop:"7em"}}>
+                <div style={{marginTop:"7em"}}>
                 <h1>Welcome back {this.state.name}</h1>
                 <div style={{paddingLeft:"2%"}}>
                     <Button onClick={()=>{this.setState({type:"ongoing_projects"})}} bsStyle="info">Ongoing</Button>

@@ -98,7 +98,7 @@ class AssigningDeveloper extends React.Component{
         return (
           <div style={{width:"80%",margin:"5em 15%"}}>
           <h1>{this.props.match.params.id}</h1>
-          <button onClick={logSelection}>Log Selection</button>
+          <button onClick={logSelection}>Involve them</button>
             <CheckboxTable style={{textAlign:"center"}}
                 ref={r => this.checkboxTable = r}
               columns={[

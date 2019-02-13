@@ -2,8 +2,38 @@ import React from 'react';
 import Axios from 'axios';
 import remove from '../assets/remove.png';
 import info from '../assets/info.png';
+import './dev.css';
 
-class DevDetail extends React.Component{
+class DevDetail2 extends React.Component{
+    constructor(props){
+        super(props);
+        this.state={data:[]}
+        Axios.get(`http://localhost:3002/developerdetail/${this.props.match.params.devid}`).then(res=>{
+            this.setState({data:res.data});
+            console.log(this.state.data)
+        })
+    }
+
+    render(){
+        console.log(this.state.data);
+        return(
+            <div style={{marginTop:"7em",justifyContentL:"center"}}>
+                    <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Name of the Developer :</h4>
+                     <h4 style={{color:"red"}}>{this.state.data.name}</h4> 
+                      </div><br/>
+                      <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Contact of the developer :</h4>
+                     <h4 style={{color:"red"}}>{this.state.data.contactNo}</h4> 
+                      </div><br/>
+                      <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>EmailId of the developer :</h4>
+                     <h4 style={{color:"red"}}>{this.state.data.email}</h4> 
+                      </div><br/>
+                    </div>
+        )
+    }
+}
+
+
+class DevDetail1 extends React.Component{
     constructor(props){
         super(props);
         this.state={data:[],showproject:""}
@@ -19,33 +49,37 @@ class DevDetail extends React.Component{
         this.setState({showproject:"complete"})
     }
     ongoingproject(){
-        this.setState({showproject:"ongoing"})
+        this.setState({showproject:'ongoing'})
     }
 
     render(){
             console.log(this.state.data);
         if(this.state.showproject===""){
         return(
-            <div style={{justifyContent:"center",marginTop:"10em",textAlign:"center"}}>
-                <div style={{display:"flex"}}><h1>Name: </h1>
-                <h2>{this.state.data.name}</h2></div><br/>
-                <div style={{display:"flex"}}><h1>Skills: </h1>
-                <h2>{this.state.data.skills}</h2></div><br/>
-                <div style={{display:"flex"}}><h1>Contact: </h1>
-                <h2>{this.state.data.contactNo}</h2></div><br/>
-                <button onClick={this.showprojects}>Show completed Projects</button>
-                <button onClick={this.ongoingproject}>Show Ongoing_projects Projects</button>
-            </div>
-        )
-        }
+            <div style={{marginTop:"7em",justifyContentL:"center"}}>
+                    <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Name of the Developer :</h4>
+                     <h4 style={{color:"red"}}>{this.state.data.name}</h4> 
+                      </div><br/>
+                      <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Contact of the developer :</h4>
+                     <h4 style={{color:"red"}}>{this.state.data.contactNo}</h4> 
+                      </div><br/>
+                      <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>EmailId of the developer :</h4>
+                     <h4 style={{color:"red"}}>{this.state.data.email}</h4> 
+                      </div><br/>
+                      <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.ongoingproject}>Click to See Ongoing_projects of {this.state.data.name}</button>
+                      </div><br/>
+                      <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.showprojects}>Click to See Completed Projects of {this.state.data.name}</button>
+                      </div><br/>
+                    </div>
+        )}
         else if(this.state.showproject==="complete"){
             var projects;
             if(this.state.data.projects_completed.length===0)
-                projects="Nothing to show";
+                projects=<h1 style={{textAlign:'center'}}>"Nothing to show"</h1>
             else
                 projects=this.state.data.projects_completed.map(i=>{
                     return(
-                        <div style={{justifyContent:"center",display:"flex",border:"1px solid black",width:"fit-content",height:"fit-content"}}>
+                        <div style={{marginLeft:'30%'}} className="pro">
                         <h1>{i.name}</h1>
                         <img height="5%" width="5%" src={remove}/>
                         <a href={`/ProjectDetail/${i.proid}`}><img height="30%" width="20%" src={info}/></a>
@@ -53,16 +87,18 @@ class DevDetail extends React.Component{
                      )
                 })
             return(
-            <div style={{justifyContent:"center",marginTop:"10em",textAlign:"center"}}>
-                <div style={{display:"flex"}}><h1>Name: </h1>
-                <h2>{this.state.data.name}</h2></div><br/>
-                <div style={{display:"flex"}}><h1>Skills: </h1>
-                <h2>{this.state.data.skills}</h2></div><br/>
-                <div style={{display:"flex"}}><h1>status: </h1>
-                <h2>{this.state.data.status}</h2></div><br/>
-                <div style={{display:"flex"}}><h1>Contact: </h1>
-                <h2>{this.state.data.contactNo}</h2></div><br/>
-                <button onClick={this.ongoingproject}>Show Ongoing Projects</button><br/>
+                <div style={{marginTop:"7em",justifyContentL:"center"}}>
+                <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Name of the Developer :</h4>
+                 <h4 style={{color:"red"}}>{this.state.data.name}</h4> 
+                  </div><br/>
+                  <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Contact of the developer :</h4>
+                 <h4 style={{color:"red"}}>{this.state.data.contactNo}</h4> 
+                  </div><br/>
+                  <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>EmailId of the developer :</h4>
+                 <h4 style={{color:"red"}}>{this.state.data.email}</h4> 
+                  </div><br/>
+                  <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.ongoingproject}>Click to See Ongoing_projects of {this.state.data.name}</button>
+                  </div><br/>
                 {projects}
             </div>
             )
@@ -71,27 +107,30 @@ class DevDetail extends React.Component{
             console.log(this.state.data.ongoing_projects)
             var ongoing=this.state.data.ongoing_projects.map(i=>{
                 return(
-                <div style={{justifyContent:"center",display:"flex",border:"1px solid black",width:"fit-content",height:"fit-content"}}>
+                <div style={{marginLeft:'30%'}} className="pro">
                 <h1>{i.name}</h1>
                 <a href={`/ProjectDetail/${i.proid}`}><img height="30%" width="20%" src={info}/></a>
             </div>
                 )
             })
             return(
-                <div style={{justifyContent:"center",marginTop:"10em",textAlign:"center"}}>
-                    <div style={{display:"flex"}}><h1>Name: </h1>
-                    <h2>{this.state.data.name}</h2></div><br/>
-                    <div style={{display:"flex"}}><h1>Skills: </h1>
-                    <h2>{this.state.data.skills}</h2></div><br/>
-                    <div style={{display:"flex"}}><h1>status: </h1>
-                    <h2>{this.state.data.status}</h2></div><br/>
-                    <div style={{display:"flex"}}><h1>Contact: </h1>
-                    <h2>{this.state.data.contactNo}</h2></div><br/>
-                    <button onClick={this.showprojects}>Show completed Projects</button>
+                <div style={{marginTop:"7em",justifyContentL:"center"}}>
+                <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Name of the Developer :</h4>
+                 <h4 style={{color:"red"}}>{this.state.data.name}</h4> 
+                  </div><br/>
+                  <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Contact of the developer :</h4>
+                 <h4 style={{color:"red"}}>{this.state.data.contactNo}</h4> 
+                  </div><br/>
+                  <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>EmailId of the developer :</h4>
+                 <h4 style={{color:"red"}}>{this.state.data.email}</h4> 
+                  </div><br/>
+                  <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.showprojects}>Click to See Comleted of {this.state.data.name}</button>
+                  </div><br/>
                     {ongoing}
                 </div>
             )
         }
     }
 }
-export default DevDetail;
+
+export  {DevDetail1,DevDetail2};

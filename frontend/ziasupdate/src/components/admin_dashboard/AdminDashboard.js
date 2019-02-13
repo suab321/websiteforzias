@@ -43,9 +43,12 @@ class AdminDashboard extends React.Component{
                 <div style={{marginTop:"7em",justifyContent:"center"}}>
                     <h1 style={{textAlign:"center"}}>Welcome home {this.state.name}</h1>
                     <div style={{paddingLeft:"2%"}}>
-                    <Button onClick={()=>{this.setState({type:"ongoing"})}} bsStyle="info">Ongoing</Button>
+                    <Button onClick={()=>{this.setState({type:"ongoing"})}} bsStyle="danger">Ongoing</Button>
                     <Button onClick={()=>{this.setState({type:"completed"})}} bsStyle="success">Completed</Button>
                     </div>
+                    <div style={{textAlign:'right',paddingRight:'5%'}}><Button href="/all_developer" bsStyle="info">
+                        Click to see all the developers
+                        </Button></div>
                 </div>
             )
          }
@@ -54,8 +57,11 @@ class AdminDashboard extends React.Component{
                 <div style={{marginTop:"7em",justifyContent:"center"}}>
                     <h1 style={{textAlign:"center"}}>Welcome home {this.state.name}</h1>
                     <div style={{paddingLeft:"2%"}}>
-                    <Button onClick={()=>{this.setState({type:"ongoing"})}} bsStyle="info">Ongoing</Button>
+                    <Button onClick={()=>{this.setState({type:"ongoing"})}} bsStyle="danger">Ongoing</Button>
                     <Button onClick={()=>{this.setState({type:"completed"})}} bsStyle="success">Completed</Button>
+                    <div style={{textAlign:'right'}}><Button href="/all_developer" bsStyle="info">
+                        Click to see all the developers
+                        </Button></div>
                     </div>
                     <ShowTable1 selected={this.selected} type={this.state.type}/>
                 </div>

@@ -13,11 +13,12 @@ import Password from './components/password/Password';
 import DeveloperDashboard from './components/developerdashboard/DeveloperDashboard';
 import AssigningDeveloper from './components/assigning_developer/AssigningDevelopers';
 import ProjectDetail from './components/showtable/ProjectDetail';
-import DevDetail from './components/DeveloperDetail/DevDetail';
+import {DevDetail1,DevDetail2} from './components/DeveloperDetail/DevDetail';
 import ProjectforDev from './components/showtable/ProjectforDev';
 import All_Developer from './components/alldeveloper/All_developer';
 import Axios from 'axios';
 import {Redirect} from 'react-router';
+import All_developers from './components/alldeveloper/All_developer';
 
 
 
@@ -42,10 +43,12 @@ class App extends Component {
               <div>
                 <switch>
                   <Route path="/mypro/:proid" component={ProjectforDev}/>
-                  <Route path="/developerdetail/:devid" component={DevDetail}/>
+                  <Route path="/developerdetail/:devid" component={DevDetail1}/>
+                  <Route path="/developerdetail2/:devid" component={DevDetail2}/>
                   <Route path="/assign/:proid" component={AssigningDeveloper}/>
                   <Route path="/password/:email" component={Password}/>
                   <Route path="/developerdashboard" component={DeveloperDashboard}/>
+                  <Route path="/all_developer" component={All_developers}/>
                   <Route exact path='/adminlogin' component={AdminLogin}/>
                   <Route exact path="/developers_login" component={DeveloperLogin}/>
                   <Route exact path="/developers_details/:email" component={DeveloperDetails}/>
@@ -84,7 +87,8 @@ class App extends Component {
                 <switch>
                   <Route path="/all_developer" component={All_Developer}/>
                   <Route path="/mypro/:proid" component={ProjectforDev}/>
-                  <Route path="/developerdetail/:devid" component={DevDetail}/>
+                  <Route path="/developerdetail/:devid" component={DevDetail1}/>
+                  <Route path="/developerdetail2/:devid" component={DevDetail2}/>
                   <Route path="/assign/:proid" component={AssigningDeveloper}/>
                   <Route path="/password/:email" component={Password}/>
                   <Route path="/developerdashboard" component={DeveloperDashboard}/>

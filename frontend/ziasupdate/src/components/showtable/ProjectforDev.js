@@ -1,6 +1,7 @@
 import React from 'react';
 import Axios from 'axios';
 import {DeveloperinProject2} from './DeveloperinProject';
+import './showtable.css';
 
 
 class ProjectforDev extends React.Component{
@@ -86,51 +87,61 @@ class ProjectforDev extends React.Component{
 
     render(){
         if(this.state.showdeveloper === 1){
+            console.log(this.state.prodetail.developers);
         return(
-            <div style={{marginTop:'7em'}}>
-            <div style={{marginTop:"7em",justifyContentL:"center"}}>
-                  <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Details of the project :</h4>
+            <div>
+            <div style={{marginTop:'7em'}}></div>
+             <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Name of the project :</h4>
+                 <h4 style={{color:"red"}}>{this.state.prodetail.name}</h4> 
+                </div><br/>
+                <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Details of the project :</h4>
                  <h4 style={{color:"red"}}>{this.state.prodetail.details}</h4> 
-                  </div> <br/>
+                  </div><br/>
                   <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.developer}>Click to hide</button>
                   </div><br/>
                   <DeveloperinProject2 style={{justifyContent:"center"}} proid={this.props.match.params.proid}/>   
                 </div>
-            </div>
-        )
+          )
         }
         else if(this.state.showdeveloper === 0){
             return(
-                <div style={{marginTop:'7em'}}>
-                <div style={{marginTop:"7em",justifyContentL:"center"}}>
-                      <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Name of the project :</h4>
-                     <h4 style={{color:"red"}}>{this.state.prodetail.details}</h4> 
-                      </div> <br/>
+                <div>
+                <div style={{marginTop:'7em'}}></div>
+                <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Name of the project :</h4>
+                 <h4 style={{color:"red"}}>{this.state.prodetail.name}</h4> 
+                </div><br/>
+                      <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Details of the project :</h4>
+                 <h4 style={{color:"red"}}>{this.state.prodetail.details}</h4> 
+                  </div><br/>
                       <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.showtask}>Click to see tasks assigned</button>
                       </div><br/>
                       <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><button onClick={this.developer}>Click to see the developers of project</button>
                       </div><br/>
-                    </div>
                 <div>
-                </div>
                     <label>Status</label>
                     <input type="text" ref={this.input} readOnly={true} placeholder={this.state.data} />
                     <button onClick={this.edit}>Click to edit your status</button>
-                    <button onClick={this.update}>Set Status</button>
-                    
+                    <button onClick={this.update}>Set Status</button>  
                 </div>
+            </div>
             )
         }
         else{
             var tasks=this.state.tasks;
             tasks=this.sort(tasks);
-            var task=tasks.map(i=>{
+            var task;
+            if(tasks.length === 0){
+                task=<h1 style={{textAlign:'center'}}>NO TASK IS ASSIGNED</h1>
+            }
+            else{
+             task=tasks.map(i=>{
                 if(i.iscomplete){
                     return(
-                        <div style={{background:'green'}}>
+                        <div className="task_card" style={{background:'green'}}>
                         <h3>Completed Tasks</h3>
                             <div style={{justifyContent:"flex"}}>
                                 <h6>task:</h6>{i.task}
+                                <h6>endate:</h6>{i.enddate}<br/><br/>
                                 <button style={{textAlign:"right"}} onClick={()=>{this.mark(0,i)}}>mark as incomplete</button>
                             </div>
                             {/* <div style={{justifyContent:"flex"}}>
@@ -141,21 +152,25 @@ class ProjectforDev extends React.Component{
                 }
                 else{
                     return(
-                        <div style={{background:'red'}}>
+                        <div className="task_card" style={{background:'red'}}>
                         <h3>Yet To be Finished Tasks</h3>
                             <div style={{justifyContent:"flex"}}>
                                 <h6>task:</h6>{i.task}
                             </div>
                             <div style={{justifyContent:"flex"}}>
-                                <h6>endate:</h6>{i.enddate}
+                                <h6>endate:</h6>{i.enddate}<br/><br/>
                                 <button style={{textAlign:"right"}} onClick={()=>{this.mark(1,i)}}>mark as complete</button>
                             </div>
                         </div>
                     )
                 }
             })
+        }
             return(<div style={{marginTop:'7em'}}>
             <div style={{marginTop:"7em",justifyContentL:"center"}}>
+            <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Name of the project :</h4>
+                 <h4 style={{color:"red"}}>{this.state.prodetail.name}</h4> 
+                </div><br/>
                   <div style={{textAlign:"center",display:"flex",justifyContent:"center"}}><h4>Details of the project :</h4>
                  <h4 style={{color:"red"}}>{this.state.prodetail.details}</h4> 
                   </div> <br/>

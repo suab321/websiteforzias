@@ -5,15 +5,16 @@ import {confirmAlert} from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import edit from '../assets/edit.png';
 import Modal from 'react-modal';
+import './showtable.css';
 
   //admin Card
   const customStyles = {
     content : {
       top                   : '50%',
       left                  : '50%',
-      right                 : 'auto',
+      right                 : '',
       bottom                : 'auto',
-      marginRight           : '-50%',
+      marginRight           : '',
       transform             : 'translate(-50%, -50%)'
     }
   };
@@ -67,21 +68,21 @@ class Card1 extends React.Component{
 
 render() {
   return (
-    <div style={{border:"1px solid black",width:"fit-content",marginTop:"2em",marginLeft:"26%",padding:"2% 2%"}}>
-    <a href={`/projectdetail/${this.props.i._id}`}><h1>{this.props.i.name}</h1></a>
-    <img onClick={()=>{this.remove(this.props.i._id,this.props.i.name)}} src={remove} height="20%" width="20%"/>
-    <img onClick={()=>{this.edit(this.props.i._id)}} src={edit} height="20%" width="20%"/>
+    <div className="projects_card">
+    <a style={{textAlign:'center'}} href={`/projectdetail/${this.props.i._id}`}><h1>{this.props.i.name}</h1></a>
+    <img style={{paddingRight:'3%',cursor:'pointer'}} onClick={()=>{this.remove(this.props.i._id,this.props.i.name)}} src={remove} height="7%" width="7%"/>
+    <img style={{cursor:'pointer'}} onClick={()=>{this.edit(this.props.i._id)}} src={edit} height="7%" width="7%"/>
     <Modal
           isOpen={this.state.isModalOpen}
           style={customStyles}
         >
           <h2 ref={subtitle => this.subtitle = subtitle}></h2>
           <button onClick={()=>{this.setState({isModalOpen:false})}}>close</button>
-          <div>Assign Task</div>
+          <div>Update Project Details</div>
           <div>
             <input ref={this.detailref} placeholder="enter the details" />
             <input ref={this.dateref} placeholder="enter the deadline" />
-            <button onClick={this.confirmedit}>Assign</button>
+            <button onClick={this.confirmedit}>Update</button>
           </div>
         </Modal>
     </div>

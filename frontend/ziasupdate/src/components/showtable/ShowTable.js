@@ -3,6 +3,7 @@ import 'react-table/react-table.css';
 import Axios from 'axios';
 import {Card1} from './Card';
 import {Card2} from './Card';
+import './showtable.css';
 
 class ShowTable1 extends React.Component{
 
@@ -24,18 +25,28 @@ class ShowTable1 extends React.Component{
     }
 
     render(){
-        const card=this.state.data.map(i=>{
+        let card=null;
+        if(this.state.data.length){
+         card=this.state.data.map(i=>{
             return(
-                <div>
-                <Card1 i={i}/>
-                </div>
+                <Card1 i={i}/> 
             )
         })
+    }
+        if(card!==null){
         return(
-       <div style={{display:"center"}}>
+       <div style={{display:"center",marginLeft:'20%'}}>
         {card}
        </div>
         )
+        }
+        else{
+            return(
+            <div style={{display:"center"}}>
+            <h1>No projects</h1>
+            </div>
+            )
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 const express=require('express');
-const session=require('express-session');
+const session=require('cookie-session');
 const jwt=require('jsonwebtoken');
 const cors=require('cors');
 const {url}=require('./url');
@@ -376,7 +376,7 @@ app.get('/projectdetail/:id',verify,(req,res)=>{
 //getting details of project for developer
 app.get('/projectdetailfordev/:id',verify,(req,res)=>{
     jwt.verify(req.token,"suab",(err,authdata)=>{
-        project.findById({_id:req.params.id},{details:true,developers:true}).then(user=>{
+        project.findById({_id:req.params.id},{name:true,details:true,developers:true}).then(user=>{
             if(user)
                 res.status(200).json(user);
             else
@@ -605,6 +605,36 @@ app.put('/updateprojectstatus/:proid',verify,(req,res)=>{
     })
 })
 
+//removing a developer
+app.delete('/removedeveloper/:devid',verify,(req,res)=>{
+    jwt.verify(req.token,'suab',(err,authdata)=>{
+        if(err){
+            res.status(400).json(err);
+        }
+        else{
+            admin.findById({_id:authdata.user._id}).then(user=>{
+                if(user){
+                    developer.findOneAndRemove({_id:req.params.devid}).then(user=>{
+                        var ongoing=user.ongoing_projects;
+                        var proid=ongoing.map(i=>{return i.proid})
+                        var proid2=JSON.stringify(proid);
+                        project.find({}).then(user=>{
+                            user.forEach(i=>{
+                                if(proid2.indexOf(i._id) !== -1){
+                                    project.findOneAndUpdate({_id:i._id},{$pull:{'developers':{'devid':req.params.devid}}}).then(user=>{res.status(200).json(user)})
+                                }
+                            })
+                        })
+                        
+                        
+                    }).catch(err=>res.status(400).json("626"+err));
+                }
+            }).catch(err=>res.status(400).json("628"+err))
+        }
+    })
+})
+
+
 
 //removing a project
 app.delete('/removeproject/:proid',verify,(req,res)=>{
@@ -623,7 +653,7 @@ app.delete('/removeproject/:proid',verify,(req,res)=>{
                            console.log("485"+users)
                             user.forEach(i=>{
                                 if(users.indexOf(i._id) !== -1){
-                                    developer.findByIdAndUpdate({_id:i._id},{$pull:{'ongoing_projects':{'proid':req.params.proid}}},{new:true}).then(user=>{
+                                    developer.findOneAndUpdate({_id:i._id},{$pull:{'ongoing_projects':{'proid':req.params.proid}}},{new:true}).then(user=>{
                                         console.log("489"+user)
                                     }).catch(err=>{console.log("490"+err)})
                                 }
