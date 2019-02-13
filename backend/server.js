@@ -1,5 +1,5 @@
 const express=require('express');
-const session=require('cookie-session');
+const session=require('express-session');
 const jwt=require('jsonwebtoken');
 const cors=require('cors');
 const {url}=require('./url');
@@ -13,7 +13,9 @@ const app=express();
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended:false}))
 app.use(cors({
-    credentials:true
+    credentials:true,
+    origin: ['http://localhost:3000'],
+    methods:['GET','POST','PUT','DELETE']
 }))
 app.use((req,res,next)=>{
     res.header("Access-Control-Allow-Origin",`${url}`);
@@ -22,18 +24,39 @@ app.use((req,res,next)=>{
     res.header("Access-Allow-Credentials","true")
     next();
 })
-app.use(session({key:'user_sid',secret:'suab321',resave:true,saveUninitialized:true,cookie:{maxAge:null}}))
+app.use(session({key:'user_sid',secret:'suab321',resave:false,saveUninitialized:false,cookie:{maxAge:null}}))
 app.use(cookieparser());
 const verify=(req,res,next)=>{
     const bearer=req.headers['authorization'];
     if(bearer==='undefined')
-        res.status(403).json('No access token');
+        res.redirect('http://localhost:3000/adminlogin');
     else{
         req.token=bearer.split(' ')[1];
         next();
     }
-
 }
+//to check if session exist
+app.get('/user_exist',(req,res)=>{
+    
+    if(req.session.user && req.cookies.user_sid)
+        res.status(200).json('yes');
+    else
+        res.json('no');
+})
+
+//to logout the current user
+app.get('/logout',(req,res)=>{
+    console.log(req.cookies.user_sid);
+    if(req.session.user && req.cookies.user_sid)
+        res.clearCookie('user_sid').json('ok');
+})
+
+app.get('/loggedin',verify,(req,res)=>{
+    jwt.verify(req.token,'suab',(err,authdata)=>{
+        if(authdata)
+            res.redirect('http://localhost:3000/developerdashboard')
+    })
+})
 
 //to get the access token 
 app.get('/user',(req,res)=>{

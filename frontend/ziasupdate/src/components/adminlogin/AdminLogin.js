@@ -21,8 +21,9 @@ class AdminLogin extends React.Component{
           <input type="email" name="email" required/><br/><br/>
           <label>Password</label><br/><br/>
           <input type="password" name="password" required /><br/><br/>
-          <button style={{cursor: "pointer",fontSize: "1em"}}>Register</button><br/><br/>
+          <button style={{cursor: "pointer",fontSize: "1em"}}>Login</button><br/><br/>
           </form>
+          <a href="/developers_login" style={{cursor: "pointer",fontSize: "1em"}}>Are You Developer</a><br/><br/>
           </div>
         </div>
         )
