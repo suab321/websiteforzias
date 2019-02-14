@@ -1,11 +1,12 @@
 import React from 'react';
 import '../adminlogin/admin.css';
 import Axios from 'axios';
+import {Redirect} from 'react-router';
 
 class New extends React.Component{
     constructor(){
         super();
-        this.state={error:1};
+        this.state={error:1,redirect:false};
         this.email=React.createRef();
         this.role=React.createRef();
         this.create=this.create.bind(this);
@@ -24,7 +25,10 @@ class New extends React.Component{
         if(!this.state.error){
             Axios.get('http://localhost:3002/user',{withCredentials:true}).then(res=>{
                 if(res.status===200){
-                    Axios.post('http://localhost:3002/create',{email:this.email.current.value,role:this.role.current.value},{headers:{Authorization: `Bearer ${res.data}`}})
+                    Axios.post('http://localhost:3002/create',{email:this.email.current.value,role:this.role.current.value},{headers:{Authorization: `Bearer ${res.data}`}}).then(res=>{
+                        if(res.status === 201)
+                            this.setState({redirect:true});
+                    })
                 }
             })
             
@@ -34,6 +38,7 @@ class New extends React.Component{
     }
 
     render(){
+        if(!this.state.redirect){
         if(this.state.error){
             return(
                 <div style={{textAlign:"center"}}>
@@ -73,6 +78,12 @@ class New extends React.Component{
                 </div>
             )
           }
+        }
+        else{
+            return(
+            <Redirect to="/admindashboard"/>
+            )
+        }
     }
 }
 export default New;

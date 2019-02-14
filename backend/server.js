@@ -1,5 +1,5 @@
 const express=require('express');
-const session=require('cookie-session');
+const session=require('express-session');
 const jwt=require('jsonwebtoken');
 const cors=require('cors');
 const {url}=require('./url');
@@ -207,19 +207,6 @@ app.post('/updatedeveloper/:email',(req,res)=>{
     }).catch(err=>console.log(err))
 })
 
-//creating a superuser for testing purpose only
-app.post('/superuser',(req,res)=>{
-    const db=new admin
-    db.name=req.body.name
-    db.email=req.body.email;
-    db.password=bcrypt.hashSync(req.body.password,10)
-    db.save().then(user=>{
-        if(user)
-            res.redirect(`${url}/admin_dashboard`);
-        else
-            res.status(400).json("error")
-    })
-})
 
 //checking if the user can create the project
 app.get('/cancreate',verify,(req,res)=>{
@@ -625,7 +612,12 @@ app.delete('/removedeveloper/:devid',verify,(req,res)=>{
                                 }
                             })
                         })
-                        
+                        temporary.findOneAndRemove({email:user.email}).then(user=>{
+                            if(user){
+                                res.status(200).json(user);
+                            }
+
+                        })
                         
                     }).catch(err=>res.status(400).json("626"+err));
                 }

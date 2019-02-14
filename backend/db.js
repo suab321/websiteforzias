@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const db_url="mongodb://127.0.0.1/zias"
+const db_url="mongodb://abhi:abhi0796@ds135335.mlab.com:35335/zias"
 
 mongoose.connect(db_url).catch(err=>console.log(err));
 
